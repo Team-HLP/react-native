@@ -5,7 +5,7 @@ import React from 'react';
 
 // tamagui import 추가
 import { TamaguiProvider } from 'tamagui';
-import tamaguiConfig from './tamagui.config';
+import { tamaguiConfig } from './tamagui.config';
 
 import AddChildScreen from './src/screens/AddChildScreen';
 import ChildDetailScreen from './src/screens/ChildDetailScreen';
