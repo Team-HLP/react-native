@@ -139,6 +139,8 @@ export default function LoginScreen({ navigation }) {
         <YStack ai="stretch" space="$3">
           <Button
             size="$4"
+            backgroundColor="#A78BFA" 
+            color="white"
             animation={{ type: 'spring', damping: 14, mass: 0.6, stiffness: 180 }}
             pressStyle={{ scale: 0.96, y: 2, shadowColor: '$colorTransparent' }}
             onPress={login}
@@ -150,7 +152,6 @@ export default function LoginScreen({ navigation }) {
             size="$4"
             animation={{ type: 'spring', damping: 14, mass: 0.6, stiffness: 180 }}
             pressStyle={{ scale: 0.96, y: 2, shadowColor: '$colorTransparent' }}
-            theme="brand_alt"
             onPress={() => navigation.navigate('Signup')}
           >
             회원가입
