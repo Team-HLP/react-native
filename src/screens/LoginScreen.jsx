@@ -115,10 +115,10 @@ export default function LoginScreen({ navigation }) {
       {/* 로그인 카드 */}
       <Card bordered elevate size="$5" w="90%" maw={420} p="$6" space="$6">
         <MaskedView
-          style={{ height: 70, alignSelf: 'stretch' }}
+          style={{ height: 90, alignSelf: 'stretch' }}
           maskElement={
             <YStack f={1} jc="center" ai="center">
-              <Text fontSize="$9" fontWeight="900" letterSpacing={1}>
+              <Text fontSize="$10" fontWeight="900" letterSpacing={1}>
                 ADHD‑VR
               </Text>
             </YStack>
@@ -127,7 +127,7 @@ export default function LoginScreen({ navigation }) {
           <LinearGradient f={1} colors={gradientBluePurple} start={[0, 0]} end={[1, 1]} />
         </MaskedView>
 
-        <Text ta="center" fos="$3" theme="alt2">
+        <Text ta="center" fos="$6" theme="alt2" mt="$-5">
           for Parents
         </Text>
 
