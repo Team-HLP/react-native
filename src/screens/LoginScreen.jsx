@@ -28,6 +28,7 @@ export default function LoginScreen({ navigation }) {
       <TextInput placeholder="ID" onChangeText={setId} value={id} />
       <TextInput placeholder="Password" secureTextEntry onChangeText={setPw} value={pw} />
       <Button title="로그인" onPress={login} />
+      <Button title="회원가입" onPress={() => navigation.navigate('Signup')} />
     </View>
   );
 }
