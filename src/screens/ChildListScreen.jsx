@@ -1,4 +1,3 @@
-// src/screens/ChildListScreen.jsx
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import {
@@ -13,6 +12,7 @@ import {
   YStack,
 } from 'tamagui'
 import api from '../api/api'
+import { removeToken } from '../utils/storage'
 
 export default function ChildListScreen({ navigation }) {
   const [children, setChildren] = useState([])
@@ -36,12 +36,25 @@ export default function ChildListScreen({ navigation }) {
 
   const goToDetail = id => navigation.navigate('ChildDetail', { childrenId: id })
 
+  const logout = async () => {
+    await removeToken()
+    Alert.alert('로그아웃 되었습니다.')
+    navigation.replace('Login')
+  }
+
   /* ───────── UI ───────── */
   return (
     <YStack f={1} p="$4" space="$4" bg="$background">
-      <Text fontSize="$7" fontWeight="bold">
-        자녀 목록
-      </Text>
+      
+      {/* Header with Logout */}
+      <XStack jc="space-between" ai="center">
+        <Text fontSize="$7" fontWeight="bold">
+          자녀 목록
+        </Text>
+        <Button size="$3" chromeless onPress={logout}>
+          로그아웃
+        </Button>
+      </XStack>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <YStack space="$3">
@@ -67,7 +80,6 @@ export default function ChildListScreen({ navigation }) {
                   <Paragraph>나이 : {child.age}</Paragraph>
                 </XStack>
               </Card.Footer>
-              {/* ➜ Card.Background 제거해서 그림자도 사라짐 */}
             </Card>
           ))}
         </YStack>
