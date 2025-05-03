@@ -107,7 +107,7 @@ export default function SignupScreen({ navigation }) {
       {/* 회원가입 카드 */}
       <Card bordered elevate size="$5" w="90%" maw={420} p="$6" space="$6">
         <MaskedView
-          style={{ height: 70, alignSelf: 'stretch' }}
+          style={{ height: 90, alignSelf: 'stretch' }}
           maskElement={
             <YStack f={1} jc="center" ai="center">
               <Text fontSize="$9" fontWeight="900" letterSpacing={1}>
@@ -136,6 +136,8 @@ export default function SignupScreen({ navigation }) {
             onPress={signup}
             size="$4"
             mt="$4"
+            backgroundColor="#A78BFA"
+            color="white"
             animation={{ type: 'spring', damping: 14, mass: 0.6, stiffness: 180 }}
             pressStyle={{ scale: 0.96, y: 2 }}
           >
