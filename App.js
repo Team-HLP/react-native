@@ -20,7 +20,7 @@ function App() {
     <TamaguiProvider config={tamaguiConfig}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="ChildList" component={ChildListScreen} />
           <Stack.Screen name="AddChild" component={AddChildScreen} />
