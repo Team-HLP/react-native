@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, SafeAreaView } from 'react-native'
 import {
   Button,
   Card,
-  H6,
-  Paragraph,
   ScrollView,
-  Separator,
   Text,
   XStack,
   YStack,
@@ -17,7 +14,6 @@ import { removeToken } from '../utils/storage'
 export default function ChildListScreen({ navigation }) {
   const [children, setChildren] = useState([])
 
-  /* ───────── 데이터 ───────── */
   useEffect(() => {
     ;(async () => {
       try {
@@ -42,52 +38,68 @@ export default function ChildListScreen({ navigation }) {
     navigation.replace('Login')
   }
 
-  /* ───────── UI ───────── */
   return (
-    <YStack f={1} p="$4" space="$4" bg="$background">
-      
-      {/* Header with Logout */}
-      <XStack jc="space-between" ai="center">
-        <Text fontSize="$7" fontWeight="bold">
-          자녀 목록
-        </Text>
-        <Button size="$3" chromeless onPress={logout}>
+    <YStack f={1} bg="$background" p="$4">
+      {/* 헤더 */}
+      <XStack jc="space-between" ai="center" mb="$4">
+        <Text fontSize="$7" fontWeight="bold">자녀 목록</Text>
+        <Button
+          size="$3"
+          chromeless
+          color="$gray11"
+          fontWeight="600"
+          onPress={logout}
+        >
           로그아웃
         </Button>
       </XStack>
 
+      {/* 리스트 */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <YStack space="$3">
+        <YStack>
           {children.map(child => (
             <Card
               key={child.id}
-              size="$4"
+              p="$4"
+              mb="$3"
               borderWidth={1}
               borderColor="$gray5"
               borderRadius="$6"
-              pressStyle={{ bg: '$gray2' }}
+              backgroundColor="white"
               onPress={() => goToDetail(child.id)}
             >
-              <Card.Header padded>
-                <H6>{child.name}</H6>
-              </Card.Header>
-
-              <Separator />
-
-              <Card.Footer padded>
-                <XStack jc="space-between">
-                  <Paragraph>성별 : {child.sex}</Paragraph>
-                  <Paragraph>나이 : {child.age}</Paragraph>
-                </XStack>
-              </Card.Footer>
+              <Text fontSize="$6" fontWeight="600" mb="$2">
+                {child.name}
+              </Text>
+              <XStack jc="space-between">
+                <Text>성별 : {child.sex}</Text>
+                <Text>나이 : {child.age}</Text>
+              </XStack>
             </Card>
           ))}
         </YStack>
       </ScrollView>
 
-      <Button size="$5" mt="$4" onPress={() => navigation.navigate('AddChild')}>
-        자녀 추가
-      </Button>
+      {/* 고정된 하단 버튼 */}
+      <SafeAreaView
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+        }}
+      >
+        <YStack p="$3" bg="$background">
+          <Button
+            size="$5"
+            backgroundColor="#A78BFA"
+            color="white"
+            onPress={() => navigation.navigate('AddChild')}
+          >
+            자녀 추가
+          </Button>
+        </YStack>
+      </SafeAreaView>
     </YStack>
   )
 }
