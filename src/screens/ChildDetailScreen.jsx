@@ -1,6 +1,7 @@
 // src/screens/ChildDetailScreen.jsx
 import React, { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, SafeAreaView, ScrollView } from 'react-native'
+import { ActivityIndicator, ScrollView } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   Button,
   Card,
@@ -12,6 +13,7 @@ import {
 import api from '../api/api'
 
 export default function ChildDetailScreen({ navigation, route }) {
+  const insets = useSafeAreaInsets()
   const { childrenId } = route.params
   const [child, setChild] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -71,7 +73,10 @@ export default function ChildDetailScreen({ navigation, route }) {
 
   return (
     <YStack f={1} bg="$background">
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 80 }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 80 }}
+      >
         <YStack p="$5" space="$4">
           <Text fontSize="$9" fontWeight="900" ta="center" mb="$4">
             {child.name}
@@ -95,26 +100,24 @@ export default function ChildDetailScreen({ navigation, route }) {
         </YStack>
       </ScrollView>
 
-      <SafeAreaView
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'transparent',
-        }}
+      {/* 뒤로가기 버튼을 바텀에서 띄워서 조금 위에 고정 */}
+      <YStack
+        position="absolute"
+        bottom={insets.bottom + 16}
+        left={0}
+        right={0}
+        px="$3"
+        bg="$background"
       >
-        <YStack p="$3" bg="$background">
-          <Button
-            size="$5"
-            backgroundColor="$gray5"
-            color="$gray11"
-            onPress={() => navigation.goBack()}
-          >
-            뒤로가기
-          </Button>
-        </YStack>
-      </SafeAreaView>
+        <Button
+          size="$5"
+          backgroundColor="$gray5"
+          color="$gray11"
+          onPress={() => navigation.goBack()}
+        >
+          뒤로가기
+        </Button>
+      </YStack>
     </YStack>
   )
 }
