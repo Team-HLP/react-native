@@ -18,7 +18,6 @@ export default function ChildListScreen({ navigation }) {
   const [guardian, setGuardian] = useState(null)
   const [children, setChildren] = useState([])
 
-  // 디바이스 안전 영역 insets 가져오기
   const insets = useSafeAreaInsets()
 
   const fetchData = async () => {
@@ -37,7 +36,6 @@ export default function ChildListScreen({ navigation }) {
     }
   }
 
-  // 화면에 포커스될 때마다 (뒤로 돌아오거나) 데이터 갱신
   useFocusEffect(
     useCallback(() => {
       fetchData()
@@ -66,7 +64,13 @@ export default function ChildListScreen({ navigation }) {
             자녀 목록
           </Text>
         </YStack>
-        <Button size="$3" chromeless color="$gray11" fontWeight="600" onPress={logout}>
+        <Button
+          size="$3"
+          backgroundColor="#FFB6C1" 
+          color="white"
+          fontWeight="600"
+          onPress={logout}
+        >
           로그아웃
         </Button>
       </XStack>
@@ -97,7 +101,7 @@ export default function ChildListScreen({ navigation }) {
         </YStack>
       </ScrollView>
 
-      {/* 고정된 하단 버튼 (safe-area + 16px 띄워서 네비게이션 바로 위에 고정) */}
+      {/* 고정된 하단 버튼 */}
       <YStack
         position="absolute"
         left={0}
