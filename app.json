@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.jaewon01.app"
     },
     "web": {
       "bundler": "metro"
@@ -34,6 +35,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b283d6d4-f3a7-483d-ac26-2267e5fdf6c9"
+      }
+    },
+    "owner": "jaewon01"
   }
 }
