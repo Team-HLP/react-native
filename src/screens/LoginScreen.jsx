@@ -80,7 +80,6 @@ export default function LoginScreen({ navigation }) {
         password: pw,
       })
       await saveToken(data.access_token)
-      Alert.alert('로그인 성공')
       navigation.replace('ChildList')
     } catch {
       Alert.alert('로그인 실패', '아이디나 비밀번호를 확인하세요.')

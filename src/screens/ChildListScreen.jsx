@@ -46,7 +46,6 @@ export default function ChildListScreen({ navigation }) {
 
   const logout = async () => {
     await removeToken()
-    Alert.alert('로그아웃 되었습니다.')
     navigation.replace('Login')
   }
 
