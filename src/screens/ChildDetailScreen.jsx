@@ -1,11 +1,10 @@
 // src/screens/ChildDetailScreen.jsx
 import React, { useCallback, useEffect, useState } from 'react'
-import { SafeAreaView, ScrollView } from 'react-native'
+import { ActivityIndicator, SafeAreaView, ScrollView } from 'react-native'
 import {
   Button,
   Card,
   Separator,
-  Spinner,
   Text,
   XStack,
   YStack,
@@ -26,11 +25,11 @@ export default function ChildDetailScreen({ navigation, route }) {
       setChild(res.data)
     } catch (e) {
       console.error(e)
-      if (e.response?.status === 404) {
-        setError('해당 자녀 정보를 찾을 수 없습니다.')
-      } else {
-        setError('자녀 정보를 불러오는 중 오류가 발생했습니다.')
-      }
+      setError(
+        e.response?.status === 404
+          ? '해당 자녀 정보를 찾을 수 없습니다.'
+          : '자녀 정보를 불러오는 중 오류가 발생했습니다.'
+      )
     } finally {
       setLoading(false)
     }
@@ -43,7 +42,7 @@ export default function ChildDetailScreen({ navigation, route }) {
   if (loading) {
     return (
       <YStack f={1} jc="center" ai="center" bg="$background">
-        <Spinner size="$6" />
+        <ActivityIndicator size="large" />
       </YStack>
     )
   }
@@ -61,7 +60,7 @@ export default function ChildDetailScreen({ navigation, route }) {
     )
   }
 
-  // ─── 전화번호 포맷팅 로직 ───
+  // 전화번호 포맷팅
   const raw = (child.phone_number || '').replace(/\D+/g, '')
   let formattedPhone = raw
   if (raw.length === 11) {
