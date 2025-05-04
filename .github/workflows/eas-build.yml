@@ -1,8 +1,13 @@
-name: EAS Build (Android)
+name: EAS Build (Android — Production)
 
 on:
   push:
     branches: [main]
+
+# Optional: 같은 워크플로우가 겹치지 않도록 처리
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-android:
@@ -21,8 +26,8 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable --immutable-cache
 
-      - name: Run Android development build
+      - name: Run Android production build
         env:
-          # 여기에 EXPO_TOKEN 또는 EAS_ACCESS_TOKEN 중 하나만 있어도 됩니다
+          # EXPO_TOKEN or EAS_ACCESS_TOKEN 중 하나만 설정
           EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
-        run: npx eas build --platform android --profile development --non-interactive
+        run: npx eas build --platform android --profile production --non-interactive
