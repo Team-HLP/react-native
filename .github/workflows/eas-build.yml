@@ -11,45 +11,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 전체 히스토리 가져오기
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      # 1) 전체 히스토리 가져오기
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # Node.js 세팅
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # 2) Node.js 세팅
+      - uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # Yarn 최신 안정 버전 활성화 (Corepack)
-      - name: Enable Yarn
-        run: |
+      # 3) Corepack 활성화 & Yarn 버전 고정
+      - run: |
           corepack enable
           yarn set version stable
 
-      # EAS CLI 설치
+      # 4) EAS CLI 설치 (corepack 사용)
       - name: Install EAS CLI
-        run: yarn global add eas-cli
+        run: corepack prepare eas-cli@latest --activate
 
-      # 의존성 설치
+      # 5) 프로젝트 의존성 설치
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # Expo 로그인
+      # 6) Expo 로그인
       - name: Login to Expo
         env:
           EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
         run: |
-          eas whoami \
-            || eas login --token "$EAS_ACCESS_TOKEN"
+          eas whoami || eas login --token "$EAS_ACCESS_TOKEN"
 
-      # Android 개발용 빌드 트리거
+      # 7) Android Development Build
       - name: Run Android development build
         env:
           EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
-        run: eas build \
-              --platform android \
-              --profile development \
-              --non-interactive
+        run: |
+          eas build --platform android \
+                    --profile development \
+                    --non-interactive
