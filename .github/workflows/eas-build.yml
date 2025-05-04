@@ -1,47 +1,38 @@
-# .github/workflows/eas-build.yml
 name: EAS Build (Android)
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build-android:
     runs-on: ubuntu-latest
-
     steps:
-      # 1) 전체 히스토리 가져오기
+      # 1) 전체 히스토리 + 서브모듈 무시
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          submodules: false
 
       # 2) Node.js 세팅
-      - uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 18
 
-      # 3) Corepack 활성화 & Yarn 버전 고정
-      - run: |
-          corepack enable
-          yarn set version stable
-
-      # 4) 프로젝트 의존성 설치
+      # 3) 의존성 설치 (Yarn v4 권장 플래그)
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable --immutable-cache
 
-      # 5) Expo 로그인
+      # 4) Expo 로그인
       - name: Login to Expo
         env:
           EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
         run: |
-          eas whoami || eas login --token "$EAS_ACCESS_TOKEN"
+          yarn eas whoami || yarn eas login --token "$EAS_ACCESS_TOKEN"
 
-      # 6) Android Development Build
+      # 5) Android 개발용 빌드
       - name: Run Android development build
         env:
           EAS_ACCESS_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
-        run: |
-          eas build --platform android \
-                    --profile development \
-                    --non-interactive
+        run: yarn eas build --platform android --profile development --non-interactive
