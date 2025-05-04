@@ -17,60 +17,58 @@ import { getToken } from '../utils/storage'
 export default function AddChildScreen({ navigation }) {
   const [childId, setChildId] = useState('')
   const [code, setCode]       = useState('')
-  const [phone, setPhone]     = useState('')
   const [step, setStep]       = useState('ID')   // 'ID' | 'CODE' | 'DONE'
   const [loading, setLoading] = useState(false)
 
-  /* ─── 인증번호 요청 ─── */
+  // ─── 1) 자녀 ID로 인증번호 요청 ───
   const requestCode = async () => {
-    if (!childId) {
-      return Alert.alert('자녀 ID를 입력하세요')
+    if (!childId.trim()) {
+      Alert.alert('자녀 ID를 입력하세요')
+      return
     }
     try {
       setLoading(true)
-      const { data } = await api.get(`/guardian/children/${childId}`)
-      const phoneNum = data.phone_number
-      if (!phoneNum) throw new Error('전화번호가 없습니다')
-      setPhone(phoneNum)
-
-      await api.post('/guardian/sms/send', { phone_number: phoneNum })
+      const token = await getToken()
+      await api.post(
+        '/guardian/children',
+        { children_id: childId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       Alert.alert('인증번호가 발송되었습니다')
       setStep('CODE')
     } catch (e) {
       console.error(e)
-      Alert.alert('실패', 'ID가 잘못됐거나 네트워크 오류가 발생했습니다')
+      Alert.alert('실패', 'ID가 잘못되었거나 네트워크 오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
   }
 
-  /* ─── 인증번호 검증 + 연결 ─── */
+  // ─── 2) 인증번호 검증 및 자녀 자동 등록 ───
   const verifyAndAdd = async () => {
-    if (!code) {
-      return Alert.alert('인증번호를 입력하세요')
+    if (code.length !== 6) {
+      Alert.alert('6자리 인증번호를 입력하세요')
+      return
     }
     try {
       setLoading(true)
-      await api.post('/guardian/sms/verify', {
-        phone_number: phone,
-        certification_code: code,
-      })
-
       const token = await getToken()
       await api.post(
-        '/guardian/children',
-        { children_id: Number(childId) },
-        { headers: { Authorization: `Bearer ${token}` } },
+        '/guardian/children/verify',
+        {
+          children_id: childId,
+          certification_code: code,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
       )
-
-      Alert.alert('완료되었습니다', '', [
+      Alert.alert('자녀가 성공적으로 등록되었습니다', '', [
         { text: '확인', onPress: () => navigation.goBack() },
       ])
       setStep('DONE')
     } catch (e) {
       console.error(e)
       if (e.response?.status === 400) {
-        Alert.alert('잘못된 인증번호입니다')
+        Alert.alert('인증번호가 일치하지 않습니다')
       } else {
         Alert.alert('처리 중 오류가 발생했습니다')
       }
@@ -106,7 +104,6 @@ export default function AddChildScreen({ navigation }) {
             <YStack space="$4">
               <Input
                 placeholder="추가할 자녀 ID 입력"
-                keyboardType="numeric"
                 value={childId}
                 onChangeText={setChildId}
                 editable={!loading}
@@ -116,33 +113,24 @@ export default function AddChildScreen({ navigation }) {
                 disabled={loading}
                 size="$4"
                 width="100%"
-                bc="transparent"
-                p={0}
+                backgroundColor="#A78BFA"
+                color="white"
               >
-                <LinearGradient
-                  f={1}
-                  colors={['#6B73FF', '#A78BFA']}
-                  start={[0, 0]}
-                  end={[1, 1]}
-                  br={8}
-                  py="$3"
-                >
-                  {loading
-                    ? <Spinner color="white" />
-                    : <Text ta="center" color="white" fontWeight="600">인증번호 요청</Text>}
-                </LinearGradient>
+                {loading ? (
+                  <Spinner color="white" />
+                ) : (
+                  <Text ta="center" color="white" fontWeight="600">
+                    인증번호 요청
+                  </Text>
+                )}
               </Button>
             </YStack>
           )}
 
           {step === 'CODE' && (
             <YStack space="$4">
-              <Text ta="center" fontSize="$3" color="$gray11">
-                {phone} 로 발송된 번호 입력
-              </Text>
               <Input
-                placeholder="6자리 인증번호"
-                keyboardType="numeric"
+                placeholder="6자리 인증번호 입력"
                 value={code}
                 onChangeText={setCode}
                 editable={!loading}
@@ -152,21 +140,16 @@ export default function AddChildScreen({ navigation }) {
                 disabled={loading}
                 size="$4"
                 width="100%"
-                bc="transparent"
-                p={0}
+                backgroundColor="#A78BFA"
+                color="white"
               >
-                <LinearGradient
-                  f={1}
-                  colors={['#6B73FF', '#A78BFA']}
-                  start={[0, 0]}
-                  end={[1, 1]}
-                  br={8}
-                  py="$3"
-                >
-                  {loading
-                    ? <Spinner color="white" />
-                    : <Text ta="center" color="white" fontWeight="600">자녀 추가</Text>}
-                </LinearGradient>
+                {loading ? (
+                  <Spinner color="white" />
+                ) : (
+                  <Text ta="center" color="white" fontWeight="600">
+                    자녀 추가
+                  </Text>
+                )}
               </Button>
             </YStack>
           )}
