@@ -1,6 +1,8 @@
 // src/screens/ChildListScreen.jsx
-import React, { useEffect, useState } from 'react'
-import { Alert, SafeAreaView } from 'react-native'
+import { useFocusEffect } from '@react-navigation/native'
+import React, { useCallback, useState } from 'react'
+import { Alert } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
   Button,
   Card,
@@ -16,27 +18,31 @@ export default function ChildListScreen({ navigation }) {
   const [guardian, setGuardian] = useState(null)
   const [children, setChildren] = useState([])
 
-  useEffect(() => {
-    // 보호자 정보와 자녀 목록을 동시에 불러옵니다
-    ; (async () => {
-      try {
-        const [{ data: guardData }, { data: childrenData }] = await Promise.all([
-          // ↓ POST로 변경
-          api.post('/guardian/me'),
-          api.get('/guardian/children'),
-        ])
-        setGuardian(guardData)
-        setChildren(
-          childrenData
-            .filter(c => c.name?.trim() && c.age != null)
-            .filter((c, i, arr) => i === arr.findIndex(v => v.id === c.id))
-        )
-      } catch (e) {
-        console.log(e)
-        Alert.alert('오류', '데이터를 불러오는 중 문제가 발생했습니다.')
-      }
-    })()
-  }, [])
+  // 디바이스 안전 영역 insets 가져오기
+  const insets = useSafeAreaInsets()
+
+  const fetchData = async () => {
+    try {
+      const { data: guardData } = await api.post('/guardian/me')
+      const { data: childrenData } = await api.get('/guardian/children')
+      setGuardian(guardData)
+      setChildren(
+        childrenData
+          .filter(c => c.name?.trim() && c.age != null)
+          .filter((c, i, arr) => i === arr.findIndex(v => v.id === c.id))
+      )
+    } catch (e) {
+      console.error(e)
+      Alert.alert('오류', '데이터를 불러오는 중 문제가 발생했습니다.')
+    }
+  }
+
+  // 화면에 포커스될 때마다 (뒤로 돌아오거나) 데이터 갱신
+  useFocusEffect(
+    useCallback(() => {
+      fetchData()
+    }, [])
+  )
 
   const goToDetail = id => navigation.navigate('ChildDetail', { childrenId: id })
 
@@ -91,26 +97,23 @@ export default function ChildListScreen({ navigation }) {
         </YStack>
       </ScrollView>
 
-      {/* 고정된 하단 버튼 */}
-      <SafeAreaView
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-        }}
+      {/* 고정된 하단 버튼 (safe-area + 16px 띄워서 네비게이션 바로 위에 고정) */}
+      <YStack
+        position="absolute"
+        left={0}
+        right={0}
+        bottom={insets.bottom + 16}
+        px="$3"
       >
-        <YStack p="$3" bg="$background">
-          <Button
-            size="$5"
-            backgroundColor="#A78BFA"
-            color="white"
-            onPress={() => navigation.navigate('AddChild')}
-          >
-            자녀 추가
-          </Button>
-        </YStack>
-      </SafeAreaView>
+        <Button
+          size="$5"
+          backgroundColor="#A78BFA"
+          color="white"
+          onPress={() => navigation.navigate('AddChild')}
+        >
+          자녀 추가
+        </Button>
+      </YStack>
     </YStack>
   )
 }
