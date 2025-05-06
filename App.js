@@ -13,12 +13,15 @@ import ChildListScreen from './src/screens/ChildListScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 
+// 여기 추가 (NavigationService import)
+import { navigationRef } from './src/utils/NavigationService';
+
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
     <TamaguiProvider config={tamaguiConfig}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator>
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={SignupScreen} />
