@@ -1,10 +1,11 @@
-name: EAS Build (Android — Production)
+name: EAS Build (Android)
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - develop
 
-# Optional: 같은 워크플로우가 겹치지 않도록 처리
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -12,11 +13,13 @@ concurrency:
 jobs:
   build-android:
     runs-on: ubuntu-latest
+    env:
+      EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          submodules: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -26,8 +29,19 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable --immutable-cache
 
-      - name: Run Android production build
-        env:
-          # EXPO_TOKEN or EAS_ACCESS_TOKEN 중 하나만 설정
-          EXPO_TOKEN: ${{ secrets.EAS_ACCESS_TOKEN }}
-        run: npx eas build --platform android --profile production --non-interactive
+      - name: Determine EAS profile
+        id: eas-profile
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            echo "profile=production" >> $GITHUB_OUTPUT
+          else
+            echo "profile=development" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Android EAS build
+        run: |
+          echo "→ building with profile: ${{ steps.eas-profile.outputs.profile }}"
+          npx eas build \
+            --platform android \
+            --profile ${{ steps.eas-profile.outputs.profile }} \
+            --non-interactive
