@@ -59,6 +59,8 @@
     "eas-cli": "^16.4.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
     "typescript": "~5.8.3"
   },
   "private": true
