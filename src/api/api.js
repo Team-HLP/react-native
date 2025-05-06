@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { resetToLogin } from '../utils/NavigationService';
 
 const api = axios.create({
   baseURL: 'https://api-hlp.o-r.kr',
@@ -11,7 +12,23 @@ api.interceptors.request.use(async (config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log('요청 보낼때 헤더:', config.headers);
   return config;
 });
+
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    if (error.response?.status === 401) {
+      // 토큰 삭제
+      await AsyncStorage.removeItem('accessToken');
+
+      // 로그인 페이지로 이동 (NavigationService 이용)
+      resetToLogin();
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
