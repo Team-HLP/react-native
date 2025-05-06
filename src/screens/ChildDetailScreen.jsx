@@ -56,7 +56,7 @@ export default function ChildDetailScreen({ navigation, route }) {
           {error}
         </Text>
         <Button size="$4" onPress={loadChildDetail}>
-          다시 시도
+          <Text>다시 시도</Text>
         </Button>
       </YStack>
     )
@@ -115,7 +115,7 @@ export default function ChildDetailScreen({ navigation, route }) {
           color="$gray11"
           onPress={() => navigation.goBack()}
         >
-          뒤로가기
+          <Text>뒤로 가기</Text>
         </Button>
       </YStack>
     </YStack>

@@ -141,7 +141,7 @@ export default function SignupScreen({ navigation }) {
             animation={{ type: 'spring', damping: 14, mass: 0.6, stiffness: 180 }}
             pressStyle={{ scale: 0.96, y: 2 }}
           >
-            회원가입
+            <Text color="white">회원가입</Text>
           </Button>
 
           <Button
@@ -150,7 +150,7 @@ export default function SignupScreen({ navigation }) {
             size="$3"
             mt="$2"
           >
-            로그인으로 돌아가기
+            <Text>로그인으로 돌아가기</Text> 
           </Button>
         </YStack>
       </Card>

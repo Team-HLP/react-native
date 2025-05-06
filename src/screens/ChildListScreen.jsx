@@ -114,7 +114,7 @@ export default function ChildListScreen({ navigation }) {
           color="white"
           onPress={() => navigation.navigate('AddChild')}
         >
-          자녀 추가
+          <Text color="white">자녀 추가</Text>
         </Button>
       </YStack>
     </YStack>

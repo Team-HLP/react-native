@@ -118,7 +118,7 @@ export default function LoginScreen({ navigation }) {
           maskElement={
             <YStack f={1} jc="center" ai="center">
               <Text fontSize="$10" fontWeight="900" letterSpacing={1}>
-                ADHD‑VR
+                ADHD-VR
               </Text>
             </YStack>
           }
@@ -127,7 +127,7 @@ export default function LoginScreen({ navigation }) {
         </MaskedView>
 
         <Text ta="center" fos="$6" theme="alt2" mt="$-5">
-          for Parents
+          for Parents
         </Text>
 
         <YStack ai="stretch" space="$4">
@@ -144,7 +144,7 @@ export default function LoginScreen({ navigation }) {
             pressStyle={{ scale: 0.96, y: 2, shadowColor: '$colorTransparent' }}
             onPress={login}
           >
-            로그인
+            <Text color="white">로그인</Text>
           </Button>
 
           <Button
@@ -153,7 +153,7 @@ export default function LoginScreen({ navigation }) {
             pressStyle={{ scale: 0.96, y: 2, shadowColor: '$colorTransparent' }}
             onPress={() => navigation.navigate('Signup')}
           >
-            회원가입
+            <Text>회원가입</Text>
           </Button>
         </YStack>
       </Card>
