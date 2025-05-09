@@ -12,6 +12,7 @@ import ChildDetailScreen from './src/screens/ChildDetailScreen';
 import ChildListScreen from './src/screens/ChildListScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import StatsScreen from './src/screens/StatsScreen';
 
 // 여기 추가 (NavigationService import)
 import { navigationRef } from './src/utils/NavigationService';
@@ -28,6 +29,11 @@ function App() {
           <Stack.Screen name="ChildList" component={ChildListScreen} />
           <Stack.Screen name="AddChild" component={AddChildScreen} />
           <Stack.Screen name="ChildDetail" component={ChildDetailScreen} />
+          <Stack.Screen
+            name="Stats"
+            component={StatsScreen}
+            options={{ title: 'ADHD 통계' }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </TamaguiProvider>

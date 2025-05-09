@@ -15,10 +15,13 @@ import api from '../api/api'
 export default function ChildDetailScreen({ navigation, route }) {
   const insets = useSafeAreaInsets()
   const { childrenId } = route.params
+
   const [child, setChild] = useState(null)
+  const [sessions, setSessions] = useState([])   // 세션 목록
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  /* ───────── 자녀 상세 ───────── */
   const loadChildDetail = useCallback(async () => {
     setLoading(true)
     setError('')
@@ -37,10 +40,30 @@ export default function ChildDetailScreen({ navigation, route }) {
     }
   }, [childrenId])
 
+  /* ───────── 세션 목록 ───────── */
+  const loadSessions = useCallback(async () => {
+    try {
+      const { data } = await api.get(
+        `/guardian/children/${childrenId}/games`,   // 실제 엔드포인트에 맞게 수정
+      )
+      setSessions(data)                            // 정상 응답(200)
+    } catch (e) {
+      if (e.response?.status === 404) {
+        // 세션이 없을 때 → 빈 배열로 처리
+        setSessions([])
+      } else {
+        console.error(e)
+      }
+    }
+  }, [childrenId])
+
+  /* ───────── 초기 로드 ───────── */
   useEffect(() => {
     loadChildDetail()
-  }, [loadChildDetail])
+    loadSessions()
+  }, [loadChildDetail, loadSessions])
 
+  /* ───────── 상태별 화면 ───────── */
   if (loading) {
     return (
       <YStack f={1} jc="center" ai="center" bg="$background">
@@ -62,14 +85,17 @@ export default function ChildDetailScreen({ navigation, route }) {
     )
   }
 
-  // 전화번호 포맷팅
+  /* ───────── 전화번호 포맷 ───────── */
   const raw = (child.phone_number || '').replace(/\D+/g, '')
-  let formattedPhone = raw
-  if (raw.length === 11) {
-    formattedPhone = raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')
-  } else if (raw.length === 10) {
-    formattedPhone = raw.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
-  }
+  const formattedPhone =
+    raw.length === 11 ? raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')
+      : raw.length === 10 ? raw.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
+        : raw
+
+  /* ───────── 세션 정렬 (날짜 ↓) ───────── */
+  const sortedSessions = [...sessions].sort(
+    (a, b) => new Date(b.playedAt) - new Date(a.playedAt),
+  )
 
   return (
     <YStack f={1} bg="$background">
@@ -83,6 +109,7 @@ export default function ChildDetailScreen({ navigation, route }) {
           </Text>
           <Separator />
 
+          {/* ─── 기본 정보 ─── */}
           <Card elevate borderRadius="$6" p="$4" space="$4">
             <XStack jc="space-between">
               <Text color="$gray10">성별</Text>
@@ -97,10 +124,44 @@ export default function ChildDetailScreen({ navigation, route }) {
               <Text fontWeight="600">{formattedPhone}</Text>
             </XStack>
           </Card>
+
+          {/* ─── 세션별 점수 리스트 ─── */}
+          <Text fontSize="$8" fontWeight="800" mt="$6" mb="$2">
+            세션 조회
+          </Text>
+
+          {sortedSessions.length === 0 && (
+            <Text color="$gray9">플레이한 세션이 없습니다.</Text>
+          )}
+
+          {sortedSessions.map(s => (
+            <Card
+              key={s.gameId}
+              p="$4"
+              mb="$2"
+              bordered
+              elevate
+              onPress={() =>
+                navigation.navigate('Stats', {
+                  childrenId,
+                  gameId: s.gameId,
+                })
+              }
+            >
+              <XStack jc="space-between" ai="center">
+                <Text fontWeight="700" fontSize="$6">
+                  {s.gameName ?? `Game #${s.gameId}`}
+                </Text>
+                <Text color="$gray9">
+                  {s.playedAt?.slice(0, 10)}
+                </Text>
+              </XStack>
+            </Card>
+          ))}
         </YStack>
       </ScrollView>
 
-      {/* 뒤로가기 버튼을 바텀에서 띄워서 조금 위에 고정 */}
+      {/* 뒤로가기 버튼 */}
       <YStack
         position="absolute"
         bottom={insets.bottom + 16}
