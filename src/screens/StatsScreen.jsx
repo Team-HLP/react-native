@@ -1,3 +1,4 @@
+// src/screens/StatsScreen.jsx
 import { useRoute } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -6,26 +7,33 @@ import api from '../api/api'
 
 export default function StatsScreen({ navigation }) {
   const { params } = useRoute()
-  const { childrenId, gameId } = params          // 네비게이터로부터 전달
+  const { childrenId, gameId } = params
 
-  const [loading, setLoading]                       = useState(true)
-  const [stats,   setStats]                         = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats]     = useState(null)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchStats = async () => {
       try {
         const { data } = await api.get(
-          `/guardian/children/${childrenId}/statistics/${gameId}`,
+          `/guardian/children/${childrenId}/statistics/${gameId}`
         )
-        setStats(data)
+        console.log('Stats API response:', data)
+        // snake_case → camelCase 매핑
+        setStats({
+          impulseInhibitionScore: data.impulse_inhibition_score,
+          concentrationScore:     data.concentration_score,
+          adhdStatus:             data.adhd_status,
+        })
       } catch (e) {
-        console.error(e)
+        console.error('Stats API error:', e)
         Alert.alert('불러오기 실패', '서버 요청 중 오류가 발생했습니다.')
       } finally {
         setLoading(false)
       }
     }
-    fetch()
+
+    fetchStats()
   }, [childrenId, gameId])
 
   if (loading) {
@@ -38,7 +46,7 @@ export default function StatsScreen({ navigation }) {
 
   if (!stats) {
     return (
-      <YStack f={1} ai="center" jc="center">
+      <YStack f={1} ai="center" jc="center" p="$4">
         <Text>데이터가 없습니다.</Text>
         <Button mt="$4" onPress={() => navigation.goBack()}>
           <Text>뒤로가기</Text>
@@ -53,14 +61,14 @@ export default function StatsScreen({ navigation }) {
         <Text fontSize="$6" fontWeight="600" mb="$2">
           충동 억제 점수
         </Text>
-        <Text fontSize="$9">{stats.impulse_inhibition_score}</Text>
+        <Text fontSize="$9">{stats.impulseInhibitionScore}</Text>
       </Card>
 
       <Card p="$4" bordered elevate>
         <Text fontSize="$6" fontWeight="600" mb="$2">
           집중도 점수
         </Text>
-        <Text fontSize="$9">{stats.concentration_score}</Text>
+        <Text fontSize="$9">{stats.concentrationScore}</Text>
       </Card>
 
       <Card p="$4" bordered elevate>
