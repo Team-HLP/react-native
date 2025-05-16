@@ -16,10 +16,10 @@ export default function ChildDetailScreen({ navigation, route }) {
   const insets = useSafeAreaInsets()
   const { childrenId } = route.params
 
-  const [child, setChild] = useState(null)
+  const [child,    setChild]    = useState(null)
   const [sessions, setSessions] = useState([])   // 세션 목록
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [loading,  setLoading]  = useState(true)
+  const [error,    setError]    = useState('')
 
   /* ───────── 자녀 상세 ───────── */
   const loadChildDetail = useCallback(async () => {
@@ -44,12 +44,17 @@ export default function ChildDetailScreen({ navigation, route }) {
   const loadSessions = useCallback(async () => {
     try {
       const { data } = await api.get(
-        `/guardian/children/${childrenId}/games`,   // 실제 엔드포인트에 맞게 수정
+        `/guardian/children/${childrenId}/games`
       )
-      setSessions(data)                            // 정상 응답(200)
+      // Swagger 예시에 맞춰 key 매핑
+      const mapped = data.map(item => ({
+        gameId:      item.game_id,
+        adhdStatus:  item.adhd_status,
+        playedAt:    item.created_at,
+      }))
+      setSessions(mapped)
     } catch (e) {
       if (e.response?.status === 404) {
-        // 세션이 없을 때 → 빈 배열로 처리
         setSessions([])
       } else {
         console.error(e)
@@ -88,13 +93,15 @@ export default function ChildDetailScreen({ navigation, route }) {
   /* ───────── 전화번호 포맷 ───────── */
   const raw = (child.phone_number || '').replace(/\D+/g, '')
   const formattedPhone =
-    raw.length === 11 ? raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')
-      : raw.length === 10 ? raw.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
-        : raw
+    raw.length === 11
+      ? raw.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3')
+      : raw.length === 10
+      ? raw.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
+      : raw
 
   /* ───────── 세션 정렬 (날짜 ↓) ───────── */
   const sortedSessions = [...sessions].sort(
-    (a, b) => new Date(b.playedAt) - new Date(a.playedAt),
+    (a, b) => new Date(b.playedAt) - new Date(a.playedAt)
   )
 
   return (
@@ -150,12 +157,13 @@ export default function ChildDetailScreen({ navigation, route }) {
             >
               <XStack jc="space-between" ai="center">
                 <Text fontWeight="700" fontSize="$6">
-                  {s.gameName ?? `Game #${s.gameId}`}
+                  Session #{s.gameId}
                 </Text>
                 <Text color="$gray9">
-                  {s.playedAt?.slice(0, 10)}
+                  {s.playedAt}
                 </Text>
               </XStack>
+              <Text mt="$2">ADHD 상태: {s.adhdStatus}</Text>
             </Card>
           ))}
         </YStack>
@@ -172,7 +180,7 @@ export default function ChildDetailScreen({ navigation, route }) {
       >
         <Button
           size="$5"
-          backgroundColor="$gray5"
+          backgroundColor="#gray5"
           color="$gray11"
           onPress={() => navigation.goBack()}
         >
