@@ -49,6 +49,7 @@ export default function ChildDetailScreen({ navigation, route }) {
       // Swagger 예시에 맞춰 key 매핑
       const mapped = data.map(item => ({
         gameId:      item.game_id,
+        index:       item.index,  
         adhdStatus:  item.adhd_status,
         playedAt:    item.created_at,
       }))
@@ -157,7 +158,7 @@ export default function ChildDetailScreen({ navigation, route }) {
             >
               <XStack jc="space-between" ai="center">
                 <Text fontWeight="700" fontSize="$6">
-                  Session #{s.gameId}
+                  Session #{s.index}
                 </Text>
                 <Text color="$gray9">
                   {s.playedAt}
