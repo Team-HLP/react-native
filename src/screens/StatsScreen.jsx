@@ -1,48 +1,57 @@
 // src/screens/StatsScreen.jsx
 import { useRoute } from '@react-navigation/native'
+import { Info } from '@tamagui/lucide-icons'
 import React, { useEffect, useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ProgressCircle } from 'react-native-svg-charts'
-import { Button, Card, Text, YStack } from 'tamagui'
+import { Button, Card, Popover, Text, XStack, YStack } from 'tamagui'
 import api from '../api/api'
 
-/* ───── 게이지 컴포넌트 (카드 내부 정중앙 배치) ───── */
+/* ───── 점수 범위 툴팁 ───── */
+function RangePopover() {
+  return (
+    <Popover placement="top" size="$4">
+      <Popover.Trigger asChild>
+        <Info size={18} color="#6b7280" />
+      </Popover.Trigger>
+
+      <Popover.Content p="$3" borderRadius="$4" elevate>
+        <YStack space="$1">
+          <Text fontWeight="700">점수 기준</Text>
+          <Text color="#4ade80">정상 · 36 이상</Text>
+          <Text color="#fbbf24">주의 · 18 ‒ 35</Text>
+          <Text color="#f87171">위험 · 0 ‒ 17</Text>
+        </YStack>
+      </Popover.Content>
+    </Popover>
+  )
+}
+
+/* ───── 게이지 카드 ───── */
 function ScoreGauge({ label, value }) {
-  // 0-36점 → 0-1 비율
   const ratio = Math.min(Math.max(value, 0), 36) / 36
   const color =
     value >= 36 ? '#4ade80' : value >= 18 ? '#fbbf24' : '#f87171'
 
   return (
-    <Card
-      p="$4"
-      bordered
-      elevate
-      ai="center"
-      jc="center"
-      height={220}          /* 카드 높이 고정 → 항상 같은 비율 */
-    >
-      <Text fontSize="$6" fontWeight="600" mb="$3">
-        {label}
-      </Text>
+    <Card p="$4" bordered elevate height={230} ai="center" jc="center">
+      {/* 제목 + 툴팁 아이콘 */}
+      <XStack jc="space-between" ai="center" w="100%" mb="$3">
+        <Text fontSize="$6" fontWeight="600">{label}</Text>
+        <RangePopover />
+      </XStack>
 
-      {/* 게이지와 숫자를 겹치기 위한 래퍼 */}
+      {/* 게이지 */}
       <YStack ai="center" jc="center">
-        {/* 게이지 */}
         <ProgressCircle
-          style={{ height: 140, width: 140 }}   // 정사각형
+          style={{ height: 150, width: 150 }}
           progress={ratio}
           strokeWidth={10}
           progressColor={color}
-          backgroundColor="#e5e7eb"             // 회색 트랙
+          backgroundColor="#e5e7eb"
         />
-        {/* 숫자 (게이지 위 중앙) */}
-        <Text
-          position="absolute"
-          fontSize="$8"
-          fontWeight="700"
-        >
+        <Text position="absolute" fontSize="$8" fontWeight="700">
           {value}
         </Text>
       </YStack>
