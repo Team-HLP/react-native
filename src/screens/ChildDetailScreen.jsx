@@ -23,7 +23,7 @@ export default function ChildDetailScreen({ navigation, route }) {
 
   // 페이징 관련 상태
   const pageSizeOptions = [5, 10, 20]
-  const [pageSize, setPageSize] = useState(10)
+  const [pageSize, setPageSize] = useState(5)
   const [page, setPage] = useState(1)
 
   // 상태별 카드 배경색 매핑
