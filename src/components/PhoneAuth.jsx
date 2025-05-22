@@ -15,7 +15,7 @@ export default function PhoneAuth({ phone, onVerified }) {
     }
     try {
       setLoad(true)
-      await api.post('/guardian/sms/send', { phone_number: phone })
+      await api.post('/guardian/sms/send', { phone_number: phone.replace(/\D+/g, ''), })
       Alert.alert('인증번호가 발송되었습니다.')
       setReq(true)
     } catch (e) {
@@ -34,7 +34,7 @@ export default function PhoneAuth({ phone, onVerified }) {
     try {
       setLoad(true)
       await api.post('/guardian/sms/verify', {
-        phone_number: phone,
+        phone_number: phone.replace(/\D+/g, ''),
         certification_code: code,
       })
       Alert.alert('인증 성공')
