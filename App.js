@@ -1,7 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { registerRootComponent } from 'expo';
-import React from 'react';
 
 // tamagui import 추가
 import { TamaguiProvider } from 'tamagui';
@@ -10,6 +9,7 @@ import { tamaguiConfig } from './tamagui.config';
 import AddChildScreen from './src/screens/AddChildScreen';
 import ChildDetailScreen from './src/screens/ChildDetailScreen';
 import ChildListScreen from './src/screens/ChildListScreen';
+import ChildTrendScreen from './src/screens/ChildTrendScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import StatsScreen from './src/screens/StatsScreen';
@@ -33,6 +33,11 @@ function App() {
             name="Stats"
             component={StatsScreen}
             options={{ title: 'ADHD 통계' }}
+          />
+          <Stack.Screen
+            name="ChildTrend"
+            component={ChildTrendScreen}
+            options={{ title: '전체 통계 추이' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

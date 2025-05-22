@@ -79,7 +79,6 @@ export default function ChildDetailScreen({ navigation, route }) {
     loadSessions()
   }, [loadChildDetail, loadSessions])
 
-  // 로딩 & 에러 화면 처리
   if (loading) {
     return (
       <YStack f={1} jc="center" ai="center" bg="$background">
@@ -109,12 +108,10 @@ export default function ChildDetailScreen({ navigation, route }) {
       ? raw.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3')
       : raw
 
-  // 날짜 내림차순 정렬
+  // 내림차순 정렬 및 페이징
   const sortedSessions = [...sessions].sort(
     (a, b) => new Date(b.playedAt) - new Date(a.playedAt)
   )
-
-  // 페이징 계산
   const totalPages = Math.ceil(sortedSessions.length / pageSize) || 1
   const pagedSessions = sortedSessions.slice(
     (page - 1) * pageSize,
@@ -123,7 +120,6 @@ export default function ChildDetailScreen({ navigation, route }) {
 
   return (
     <YStack f={1} bg="$background">
-      {/* 스크롤 영역: footer 위까지만 */}
       <ScrollView
         style={{ flex: 1 }}
         showsVerticalScrollIndicator={false}
@@ -157,27 +153,35 @@ export default function ChildDetailScreen({ navigation, route }) {
             세션 조회
           </Text>
 
-          {/* 페이지 크기 선택 */}
-          <XStack space="$2" mb="$2" ai="center">
-            <Text>페이지당:</Text>
-            {pageSizeOptions.map(size => (
-              <Button
-                key={size}
-                size="$3"
-                theme={pageSize === size ? 'primary' : 'alt2'}
-                onPress={() => {
-                  setPageSize(size)
-                  setPage(1)
-                }}
-              >
-                <Text color={pageSize === size ? 'white' : '$color'}>
-                  {size}
-                </Text>
-              </Button>
-            ))}
+          {/* 페이지당 + 전체 통계 추이 버튼 */}
+          <XStack space="$2" mb="$2" ai="center" jc="space-between">
+            <XStack space="$2" ai="center">
+              <Text>페이지당:</Text>
+              {pageSizeOptions.map(size => (
+                <Button
+                  key={size}
+                  size="$3"
+                  theme={pageSize === size ? 'primary' : 'alt2'}
+                  onPress={() => {
+                    setPageSize(size)
+                    setPage(1)
+                  }}
+                >
+                  <Text color={pageSize === size ? 'white' : '$color'}>
+                    {size}
+                  </Text>
+                </Button>
+              ))}
+            </XStack>
+
+            <Button size="$3" onPress={() =>
+              navigation.navigate('ChildTrend', { childrenId })
+            }>
+              <Text>전체 통계 추이</Text>
+            </Button>
           </XStack>
 
-          {/* 페이징된 세션 리스트 */}
+          {/* 세션 리스트 */}
           {pagedSessions.length === 0 ? (
             <Text color="$gray9">플레이한 세션이 없습니다.</Text>
           ) : (
@@ -234,7 +238,7 @@ export default function ChildDetailScreen({ navigation, route }) {
         </YStack>
       </ScrollView>
 
-      {/* 고정 Footer: 뒤로 가기 */}
+      {/* Footer: 뒤로 가기 */}
       <YStack px="$3" pb={insets.bottom + 16} bg="$background">
         <Button
           size="$5"
