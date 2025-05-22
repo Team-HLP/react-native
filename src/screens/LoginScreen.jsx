@@ -1,8 +1,9 @@
-import MaskedView from '@react-native-masked-view/masked-view'
+// src/screens/LoginScreen.jsx
+
 import { LinearGradient } from '@tamagui/linear-gradient'
 import { MotiView } from 'moti'
 import React, { useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, Image } from 'react-native'
 import { Easing } from 'react-native-reanimated'
 import {
   Button,
@@ -88,7 +89,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <YStack f={1} jc="center" ai="center" bg="$background" p="$3">
-      {/* 비눗방울 */}
+      {/* 비눗방울 애니메이션 */}
       <Bubble
         size={420}
         delay={0}
@@ -113,32 +114,35 @@ export default function LoginScreen({ navigation }) {
 
       {/* 로그인 카드 */}
       <Card bordered elevate size="$5" w="90%" maw={420} p="$6" space="$6">
-        <MaskedView
-          style={{ height: 90, alignSelf: 'stretch' }}
-          maskElement={
-            <YStack f={1} jc="center" ai="center">
-              <Text fontSize="$10" fontWeight="900" letterSpacing={1}>
-                ADHD-VR
-              </Text>
-            </YStack>
-          }
-        >
-          <LinearGradient f={1} colors={gradientBluePurple} start={[0, 0]} end={[1, 1]} />
-        </MaskedView>
+        {/* 상단 로고 */}
+        <Image
+          source={require('../../assets/images/logo.png')}
+          style={{
+            width: 600,
+            height: 200,
+            resizeMode: 'contain',
+            alignSelf: 'center',
+            marginBottom: -30,
+          }}
+        />
 
-        <Text ta="center" fos="$6" theme="alt2" mt="$-5">
-          for Parents
-        </Text>
-
+        {/* 입력 필드 */}
         <YStack ai="stretch" space="$4">
           <Input size="$4" placeholder="ID" value={id} onChangeText={setId} />
-          <Input size="$4" placeholder="Password" secureTextEntry value={pw} onChangeText={setPw} />
+          <Input
+            size="$4"
+            placeholder="Password"
+            secureTextEntry
+            value={pw}
+            onChangeText={setPw}
+          />
         </YStack>
 
+        {/* 버튼들 */}
         <YStack ai="stretch" space="$3">
           <Button
             size="$4"
-            backgroundColor="#A78BFA" 
+            backgroundColor="#A78BFA"
             color="white"
             animation={{ type: 'spring', damping: 14, mass: 0.6, stiffness: 180 }}
             pressStyle={{ scale: 0.96, y: 2, shadowColor: '$colorTransparent' }}
