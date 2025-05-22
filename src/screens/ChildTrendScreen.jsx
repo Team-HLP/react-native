@@ -1,3 +1,4 @@
+// src/screens/ChildTrendScreen.jsx
 import React, { useEffect, useMemo, useState } from 'react'
 import { ActivityIndicator, Dimensions, ScrollView } from 'react-native'
 import { LineChart } from 'react-native-chart-kit'
@@ -99,40 +100,44 @@ export default function ChildTrendScreen({ navigation, route }) {
   return (
     <YStack f={1} bg="$background">
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 32 }}>
-        <Text fontSize="$7" fontWeight="800" ta="center" mb="$2">
-          전체 세션별 ADHD 점수 추이
-        </Text>
+        {/* 그래프 카드 */}
+        <Card bg="$gray1" p="$4" mb="$4" bordered elevate>
+          <Text fontSize="$6" fontWeight="700" mb="$2">
+            전체 세션별 ADHD 점수 추이
+          </Text>
+          <LineChart
+            data={{
+              labels,
+              datasets: [
+                { data: conc, color: () => '#4f8cff', strokeWidth: 2 },
+                { data: impl, color: () => '#00c176', strokeWidth: 2 },
+              ],
+              legend: ['집중력', '충동억제'],
+            }}
+            width={width - 64}
+            height={260}
+            chartConfig={{
+              backgroundGradientFrom: '#fff',
+              backgroundGradientTo: '#fff',
+              decimalPlaces: 1,
+              color: () => '#000',
+              labelColor: () => '#888',
+              propsForDots: { r: '4', strokeWidth: '2', stroke: '#fff' },
+              propsForBackgroundLines: { stroke: '#eee' },
+            }}
+            bezier
+            style={{ borderRadius: 16 }}
+          />
+        </Card>
 
-        <LineChart
-          data={{
-            labels,
-            datasets: [
-              { data: conc, color: () => '#4f8cff', strokeWidth: 2 },
-              { data: impl, color: () => '#00c176', strokeWidth: 2 },
-            ],
-            legend: ['집중력', '충동억제'],
-          }}
-          width={width - 32}
-          height={260}
-          chartConfig={{
-            backgroundGradientFrom: '#fff',
-            backgroundGradientTo: '#fff',
-            decimalPlaces: 1,
-            color: () => '#000',
-            labelColor: () => '#888',
-            propsForDots: { r: '4', strokeWidth: '2', stroke: '#fff' },
-            propsForBackgroundLines: { stroke: '#eee' },
-          }}
-          bezier
-          style={{ borderRadius: 16, marginBottom: 32 }}
-        />
-
+        {/* 인사이트 카드 */}
         <Card bg="$gray1" p="$4" borderRadius="$4" mb="$4" elevate>
           <Text fontSize="$6" fontWeight="700" mb="$2">상태 인사이트 요약</Text>
           <Paragraph mb="$1">{insightSummary}</Paragraph>
           <Paragraph>{trendMessage}</Paragraph>
         </Card>
 
+        {/* 세션 상태 카드 리스트 */}
         <Text fontSize="$6" fontWeight="700" mb="$2">세션별 상태</Text>
         <YStack gap="$2" mb="$6">
           {stats.map((s, i) => (
@@ -148,6 +153,7 @@ export default function ChildTrendScreen({ navigation, route }) {
         </YStack>
       </ScrollView>
 
+      {/* 하단 고정 버튼 */}
       <YStack px="$3" pb={insets.bottom + 16} bg="$background">
         <Button
           size="$5"
