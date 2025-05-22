@@ -3,44 +3,34 @@ import { useRoute } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { Alert, Platform } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { ProgressCircle } from 'react-native-svg-charts'
-import { Button, Card, Text, XStack, YStack } from 'tamagui'
+import { Button, Card, Text, YStack } from 'tamagui'
 import api from '../api/api'
 
-// ───── 게이지 카드 ─────
-function ScoreGauge({ label, value }) {
-  // 0~27 범위로 클램핑 후 0~1 비율로 변환
+// ───── 점수 ProgressBar 카드 ─────
+function ScoreBar({ label, value }) {
   const ratio = Math.min(Math.max(value, 0), 27) / 27
-  // 색상 기준도 27 기준으로 변경
   const color =
     value >= 27 ? '#4ade80' :
     value >= 18 ? '#fbbf24' :
     '#f87171'
 
   return (
-    <Card p="$4" bordered elevate height={230} ai="center" jc="center">
-      <Text color="$gray10" fontSize="$6" fontWeight="600" mb="$3">
-        {label}
-      </Text>
-      <YStack ai="center" jc="center">
-        <ProgressCircle
-          style={{ height: 150, width: 150 }}
-          progress={ratio}
-          strokeWidth={10}
-          progressColor={color}
-          backgroundColor="#e5e7eb"
-        />
-        <Text position="absolute" fontSize="$8" fontWeight="700">
-          {value}
+    <Card p="$4" bordered elevate>
+      <Text color="$gray10" fontSize="$6" fontWeight="600" mb="$2">{label}</Text>
+      <YStack>
+        <YStack bg="#e5e7eb" h={16} br="$3" overflow="hidden">
+          <YStack h="100%" w={`${ratio * 100}%`} bg={color} />
+        </YStack>
+        <Text mt="$2" fontSize="$6" fontWeight="700" ta="right">
+          {value} / 27
         </Text>
       </YStack>
     </Card>
   )
 }
 
-// ───── 상태 배지 ─────
+// ───── 상태 배지 카드 (이모지 제거 + 뱃지 스타일) ─────
 function StatusBadge({ status, score }) {
-  // 상태 문자열이 없을 때 점수 기준(27 기준)으로 파생
   const derived =
     score >= 27 ? '정상' :
     score >= 18 ? '주의' :
@@ -49,21 +39,30 @@ function StatusBadge({ status, score }) {
   const finalStatus = status || derived
 
   const map = {
-    정상: { color: '#4ade80', icon: '👍' },
-    주의: { color: '#fbbf24', icon: '⚠️' },
-    위험: { color: '#f87171', icon: '⛔' },
+    정상: { color: '#4ade80', label: '정상' },
+    주의: { color: '#fbbf24', label: '주의 필요' },
+    위험: { color: '#f87171', label: '높은 위험' },
   }
 
-  const info = map[finalStatus] ?? { color: '#6b7280', icon: '❔' }
-  const { color, icon } = info
+  const info = map[finalStatus] ?? { color: '#6b7280', label: '알 수 없음' }
 
   return (
     <Card p="$5" elevate ai="center" jc="center">
-      <XStack ai="center" space="$2">
-        <Text fontSize="$7" fontWeight="700" color={color}>
-          {icon} {finalStatus}
+      <Text fontSize="$6" color="$gray10" mb="$2">
+        현재 상태
+      </Text>
+      <YStack
+        px="$4"
+        py="$2"
+        bg={info.color}
+        br="$4"
+        ai="center"
+        jc="center"
+      >
+        <Text fontSize="$6" fontWeight="700" color="white">
+          {info.label}
         </Text>
-      </XStack>
+      </YStack>
     </Card>
   )
 }
@@ -127,14 +126,14 @@ export default function StatsScreen({ navigation }) {
         <Text fontSize="$7" fontWeight="700">ADHD 통계</Text>
       </YStack>
 
-      {/* 본문: 게이지 두 개 + 상태 배지 */}
+      {/* 본문: 점수 카드 + 상태 배지 */}
       <YStack f={1} p="$4" space="$4">
-        <ScoreGauge   label="충동 억제" value={stats.impulse} />
-        <ScoreGauge   label="집중도"     value={stats.concentration} />
-        <StatusBadge  status={stats.status} score={stats.impulse} />
+        <ScoreBar    label="충동 억제" value={stats.impulse} />
+        <ScoreBar    label="집중도"     value={stats.concentration} />
+        <StatusBadge status={stats.status} score={stats.impulse} />
       </YStack>
 
-      {/* 뒤로가기 버튼 */}
+      {/* 하단 버튼 */}
       <YStack
         position="absolute"
         bottom={insets.bottom + 16}
